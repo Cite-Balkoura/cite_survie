@@ -2,19 +2,26 @@ package fr.milekat.cite_survie;
 
 import fr.milekat.cite_survie.event.ElytraSpeedDisable;
 import fr.milekat.cite_survie.event.HammerMine;
+import fr.milekat.cite_survie.event.SpawnProtect;
 import fr.milekat.cite_survie.utils.HammerCraft;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.ArrayList;
+import java.util.UUID;
+
 public class MainSurvie extends JavaPlugin {
     private static MainSurvie mainSurvie;
+    public static ArrayList<UUID> isSafeSpawn = new ArrayList<>();
+
     @Override
     public void onEnable() {
         mainSurvie = this;
         // Events
         getServer().getPluginManager().registerEvents(new HammerMine(),this);
         getServer().getPluginManager().registerEvents(new ElytraSpeedDisable(),this);
+        getServer().getPluginManager().registerEvents(new SpawnProtect(),this);
         Bukkit.addRecipe(new HammerCraft().createDiamsHammer());
         Bukkit.addRecipe(new HammerCraft().createIronHammer());
     }

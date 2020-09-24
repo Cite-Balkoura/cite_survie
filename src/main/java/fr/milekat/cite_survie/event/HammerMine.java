@@ -3,7 +3,6 @@ package fr.milekat.cite_survie.event;
 import fr.milekat.cite_core.MainCore;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.attribute.Attribute;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.enchantments.Enchantment;
