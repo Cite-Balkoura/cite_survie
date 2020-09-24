@@ -1,5 +1,6 @@
 package fr.milekat.cite_survie;
 
+import fr.milekat.cite_survie.event.ElytraSpeedDisable;
 import fr.milekat.cite_survie.event.HammerMine;
 import fr.milekat.cite_survie.utils.HammerCraft;
 import org.bukkit.Bukkit;
@@ -13,6 +14,7 @@ public class MainSurvie extends JavaPlugin {
         mainSurvie = this;
         // Events
         getServer().getPluginManager().registerEvents(new HammerMine(),this);
+        getServer().getPluginManager().registerEvents(new ElytraSpeedDisable(),this);
         Bukkit.addRecipe(new HammerCraft().createDiamsHammer());
         Bukkit.addRecipe(new HammerCraft().createIronHammer());
     }
