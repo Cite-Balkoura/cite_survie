@@ -69,7 +69,7 @@ public class SpawnProtect implements Listener {
             }
         } else {
             /* Entrée dans la zone verte */
-            if ((ploc.getBlockX() < 25 && ploc.getBlockX() > -25) || (ploc.getBlockZ() < 25 && ploc.getBlockZ() > -25)) {
+            if ((ploc.getBlockX() < 25 && ploc.getBlockX() > -25 && ploc.getBlockZ() < 25 && ploc.getBlockZ() > -25)) {
                 MainSurvie.isSafeSpawn.add(event.getPlayer().getUniqueId());
                 event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§aVous entrez au spawn."));
             }
