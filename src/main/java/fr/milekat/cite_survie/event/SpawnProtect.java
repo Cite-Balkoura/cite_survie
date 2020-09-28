@@ -66,13 +66,13 @@ public class SpawnProtect implements Listener {
             /* Sortie de la zone rouge */
             if (ploc.getBlockX() > 50 || ploc.getBlockX() < -50 || ploc.getBlockZ() > 50 || ploc.getBlockZ() < -50) {
                 MainSurvie.isSafeSpawn.remove(event.getPlayer());
-                event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§cVous sortez du spawn."));
+                event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§cVous n'êtes plus protégé."));
             }
         } else {
             /* Entrée dans la zone verte */
             if ((ploc.getBlockX() < 25 && ploc.getBlockX() > -25 && ploc.getBlockZ() < 25 && ploc.getBlockZ() > -25)) {
                 MainSurvie.isSafeSpawn.add(event.getPlayer());
-                event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§aVous entrez au spawn."));
+                event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§aVous êtes désormais safe."));
             }
         }
     }
@@ -105,6 +105,6 @@ public class SpawnProtect implements Listener {
     }
 
     private void denyMsg(Player player) {
-        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§cVous êtes actuellement protegé par le spawn."));
+        player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§cVous êtes actuellement protegé."));
     }
 }
