@@ -19,8 +19,8 @@ import java.util.HashMap;
 public class MainSurvie extends JavaPlugin {
     private static MainSurvie mainSurvie;
     public static World WORLD;
-    public static ArrayList<Player> isSafeSpawn = new ArrayList<org.bukkit.entity.Player>();
-    public static HashMap<Player, Integer> playerCombat = new HashMap<Player, Integer>();
+    public static ArrayList<Player> isSafeSpawn = new ArrayList<>();
+    public static HashMap<Player, Integer> playerCombat = new HashMap<>();
     private BukkitTask timerDeco;
 
     @Override
