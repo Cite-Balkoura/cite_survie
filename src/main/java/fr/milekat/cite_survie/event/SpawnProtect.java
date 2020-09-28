@@ -12,20 +12,21 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
 import org.bukkit.event.entity.*;
+import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 
 public class SpawnProtect implements Listener {
 
     @EventHandler (ignoreCancelled = true)
     public void onSpawnDamage(EntityDamageEvent event) {
-        if (MainSurvie.isSafeSpawn.contains(event.getEntity().getUniqueId())) {
+        if (MainSurvie.isSafeSpawn.contains((Player) event.getEntity())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler (ignoreCancelled = true)
     public void onSpawnHit(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player && MainSurvie.isSafeSpawn.contains(event.getEntity().getUniqueId())) {
+        if (event.getDamager() instanceof Player && MainSurvie.isSafeSpawn.contains((Player) event.getEntity())) {
             event.setCancelled(true);
             denyMsg(((Player) event.getDamager()));
         }
@@ -33,7 +34,7 @@ public class SpawnProtect implements Listener {
 
     @EventHandler (ignoreCancelled = true)
     public void onSpawnShoot(EntityShootBowEvent event) {
-        if (event.getEntity() instanceof Player && MainSurvie.isSafeSpawn.contains(event.getEntity().getUniqueId())) {
+        if (event.getEntity() instanceof Player && MainSurvie.isSafeSpawn.contains((Player) event.getEntity())) {
             event.setCancelled(true);
             denyMsg(((Player) event.getEntity()));
         }
@@ -61,19 +62,24 @@ public class SpawnProtect implements Listener {
     @EventHandler
     public void onSpawnSet(PlayerMoveEvent event) {
         Location ploc = event.getPlayer().getLocation();
-        if (MainSurvie.isSafeSpawn.contains(event.getPlayer().getUniqueId())) {
+        if (MainSurvie.isSafeSpawn.contains(event.getPlayer())) {
             /* Sortie de la zone rouge */
             if (ploc.getBlockX() > 50 || ploc.getBlockX() < -50 || ploc.getBlockZ() > 50 || ploc.getBlockZ() < -50) {
-                MainSurvie.isSafeSpawn.remove(event.getPlayer().getUniqueId());
+                MainSurvie.isSafeSpawn.remove(event.getPlayer());
                 event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§cVous sortez du spawn."));
             }
         } else {
             /* Entrée dans la zone verte */
             if ((ploc.getBlockX() < 25 && ploc.getBlockX() > -25 && ploc.getBlockZ() < 25 && ploc.getBlockZ() > -25)) {
-                MainSurvie.isSafeSpawn.add(event.getPlayer().getUniqueId());
+                MainSurvie.isSafeSpawn.add(event.getPlayer());
                 event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§aVous entrez au spawn."));
             }
         }
+    }
+
+    @EventHandler
+    public void onJoinProtect(PlayerJoinEvent event) {
+        MainSurvie.isSafeSpawn.add(event.getPlayer());
     }
 
     @EventHandler (ignoreCancelled = true)

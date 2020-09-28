@@ -1,9 +1,7 @@
 package fr.milekat.cite_survie.event;
 
-import fr.milekat.cite_core.MainCore;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Arrow;
@@ -33,7 +31,7 @@ public class ElytraSpeedDisable implements Listener {
         if (event.getEntity() instanceof Player && event.getDamager() instanceof Arrow) {
             Player player = (Player) event.getEntity();
             if (!player.isGliding()) return;
-            Arrow arrow = (Arrow)event.getDamager();
+            Arrow arrow = (Arrow) event.getDamager();
             if (arrow.getShooter() instanceof Player && arrow.getShooter() == player) {
                 event.setCancelled(true);
                 arrow.remove();
