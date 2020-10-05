@@ -1,6 +1,5 @@
 package fr.milekat.cite_survie.event;
 
-import fr.milekat.cite_core.MainCore;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -11,7 +10,6 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -70,15 +68,12 @@ public class HammerMine implements Listener {
 
     @EventHandler (ignoreCancelled = true, priority = EventPriority.HIGHEST)
     public void onHammerMine(BlockBreakEvent event) {
-        if (!lastClickedBlockLoc.get(event.getPlayer().getUniqueId()).equals(event.getBlock().getLocation())) return;
+        if (!lastClickedBlockLoc.getOrDefault(event.getPlayer().getUniqueId(),null)
+                .equals(event.getBlock().getLocation()))
+            return;
         ItemStack tool = event.getPlayer().getInventory().getItemInMainHand();
         ItemMeta meta = tool.getItemMeta();
-        if (meta==null || !meta.isUnbreakable()) return;
-        if (((Damageable) meta).getDamage() >= tool.getType().getMaxDurability()) {
-            event.getPlayer().sendMessage(MainCore.prefixCmd + "§6Hammer trop utilisé, retourne voir le forgeron.");
-            event.setCancelled(true);
-            return;
-        }
+        if (meta==null || !meta.hasCustomModelData() || meta.getCustomModelData()!=1) return;
         BlockFace blockFace = lastClickedBlockFaces.getOrDefault(event.getPlayer().getUniqueId(),null);
         if (blockFace==null || !allowedFaces.contains(blockFace)) return;
         ArrayList<BlockFace> facesToMine = new ArrayList<>(allowedFaces);
@@ -88,10 +83,9 @@ public class HammerMine implements Listener {
             Block block = event.getBlock().getRelative(faceloop);
             if (allowedBlocks.contains(block.getType())) {
                 block.breakNaturally(tool);
-                processItemUses(tool, meta, 1);
+                processItemUses(tool, meta);
             }
         }
-        processItemUses(tool, meta, 0);
     }
 
     @EventHandler
@@ -104,16 +98,13 @@ public class HammerMine implements Listener {
     /**
      *      Ajout de durability ou non si unBreaking
      */
-    private void processItemUses(ItemStack itemStack, ItemMeta meta, int luckbonus) {
+    private void processItemUses(ItemStack itemStack, ItemMeta meta) {
         if (!(((Damageable) meta).getDamage() == itemStack.getType().getMaxDurability())) {
             if (new Random().nextInt(100) > (100 - (100 /
-                    (itemStack.getEnchantments().getOrDefault(Enchantment.DURABILITY, 0) + luckbonus + 1)))) {
+                    (itemStack.getEnchantments().getOrDefault(Enchantment.DURABILITY, 0) + 1 + 1)))) {
                 ((Damageable) meta).setDamage(((Damageable) meta).getDamage() + 1);
             }
         }
-        meta.setLore(Collections.singletonList("Utilisations: " + ((Damageable) meta).getDamage() + "/" +
-                itemStack.getType().getMaxDurability()));
-        meta.addItemFlags(ItemFlag.HIDE_UNBREAKABLE);
         itemStack.setItemMeta(meta);
     }
 }
