@@ -1,10 +1,8 @@
 package fr.milekat.cite_survie;
 
+import fr.milekat.cite_survie.engine.AntiAFKTimer;
 import fr.milekat.cite_survie.engine.DecoTimer;
-import fr.milekat.cite_survie.event.AntiDecoCmb;
-import fr.milekat.cite_survie.event.ElytraSpeedDisable;
-import fr.milekat.cite_survie.event.HammerMine;
-import fr.milekat.cite_survie.event.SpawnProtect;
+import fr.milekat.cite_survie.event.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.NamespacedKey;
@@ -25,10 +23,10 @@ public class MainSurvie extends JavaPlugin {
     public static ArrayList<Player> isSafeSpawn = new ArrayList<>();
     public static HashMap<Player, Integer> playerCombat = new HashMap<>();
     public static HashMap<Zombie, Inventory> playerInventory = new HashMap<>();
-    /*public static HashMap<Player, Location> lastPlayerLocation = new HashMap<>();
-    public static HashMap<Player, Integer>*/
+    public static HashMap<Player, Location> lastPlayerLocation = new HashMap<>();
+    public static HashMap<Player, Integer> timesPlayerAFK = new HashMap<>();
     private BukkitTask timerDeco;
-    //private BukkitTask timerAfk;
+    private BukkitTask timerAfk;
 
     @Override
     public void onEnable() {
@@ -40,8 +38,10 @@ public class MainSurvie extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new ElytraSpeedDisable(),this);
         getServer().getPluginManager().registerEvents(new SpawnProtect(),this);
         getServer().getPluginManager().registerEvents(new AntiDecoCmb(),this);
+        getServer().getPluginManager().registerEvents(new AntiAFK(),this);
+        // Engines
         timerDeco = new DecoTimer().runTask();
-        //timerAfk = new DecoTimer().runTask();
+        timerAfk = new AntiAFKTimer().runTask();
     }
 
     @Override
@@ -50,7 +50,7 @@ public class MainSurvie extends JavaPlugin {
         Bukkit.removeRecipe(new NamespacedKey(MainSurvie.getMainSurvie(), "iron_hammer"));
         for (Zombie zombie: MainSurvie.playerInventory.keySet()) zombie.remove();
         timerDeco.cancel();
-        //timerAfk.cancel();
+        timerAfk.cancel();
     }
 
     public static MainSurvie getMainSurvie() {
