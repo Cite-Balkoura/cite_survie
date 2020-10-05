@@ -15,8 +15,10 @@ public class DecoTimer {
             @Override
             public void run() {
                 for (Map.Entry<Player, Integer> loop : MainSurvie.playerCombat.entrySet()) {
+                    if (!loop.getKey().isOnline()) continue;
                     if (loop.getValue() < 1) {
                         MainSurvie.playerCombat.remove(loop.getKey());
+                        loop.getKey().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§aPlus en combat"));
                         continue;
                     }
                     loop.getKey().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent(

@@ -1,28 +1,31 @@
 package fr.milekat.cite_survie.event;
 
 import fr.milekat.cite_survie.MainSurvie;
-import org.bukkit.entity.Entity;
+import net.craftersland.data.bridge.api.events.SyncCompleteEvent;
+import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
-import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import java.util.HashMap;
+import java.util.Map;
 
 public class AntiDecoCmb implements Listener {
-    private final HashMap<Zombie, Inventory> playerInventory = new HashMap<>();
-    @EventHandler
+    @EventHandler (ignoreCancelled = true)
     public void onPlayerTakeHit(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player) MainSurvie.playerCombat.put((Player) event.getDamager(), 15);
-        if (event.getEntity() instanceof Player) MainSurvie.playerCombat.put((Player) event.getEntity(), 15);
+        if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
+            MainSurvie.playerCombat.put((Player) event.getDamager(), 15);
+            MainSurvie.playerCombat.put((Player) event.getEntity(), 15);
+        }
     }
 
     @EventHandler
@@ -33,9 +36,9 @@ public class AntiDecoCmb implements Listener {
         }
     }
 
-    @EventHandler
+    @EventHandler (priority = EventPriority.LOW)
     public void onPlayerLeave(PlayerQuitEvent event) {
-        if (MainSurvie.isSafeSpawn.contains(event.getPlayer())) {
+        if (MainSurvie.playerCombat.containsKey(event.getPlayer())) {
             Zombie zombie = (Zombie) event.getPlayer().getWorld().spawnEntity(event.getPlayer().getLocation(), EntityType.ZOMBIE);
             zombie.setAI(false);
             zombie.setCustomName(event.getPlayer().getName());
@@ -43,18 +46,37 @@ public class AntiDecoCmb implements Listener {
             if (zombie.getEquipment()!=null && event.getPlayer().getEquipment()!=null) {
                 zombie.getEquipment().setArmorContents(event.getPlayer().getEquipment().getArmorContents());
             }
-            playerInventory.put(zombie, event.getPlayer().getInventory());
-            event.getPlayer().setHealth(0.0D);
+            if (zombie.getEquipment()!=null) {
+                zombie.getEquipment().setItemInMainHand(event.getPlayer().getInventory().getItemInMainHand());
+            }
+            Inventory inventory = Bukkit.createInventory(null, InventoryType.PLAYER);
+            inventory.setContents(event.getPlayer().getInventory().getContents());
+            MainSurvie.playerInventory.put(zombie, inventory);
+            event.getPlayer().getInventory().clear();
+            event.getPlayer().teleport(MainSurvie.SPAWN);
+        }
+    }
+
+    @EventHandler
+    public void onPlayerReJoin(SyncCompleteEvent event) {
+        for (Map.Entry<Zombie, Inventory> loop: MainSurvie.playerInventory.entrySet()) {
+            if (loop.getKey().getName().equalsIgnoreCase(event.getPlayer().getName())) {
+                event.getPlayer().teleport(loop.getKey().getLocation());
+                event.getPlayer().getInventory().setContents(loop.getValue().getContents());
+                MainSurvie.playerInventory.remove(loop.getKey());
+                loop.getKey().remove();
+            }
         }
     }
 
     @EventHandler
     public void onZombiePlayerDie(EntityDeathEvent event) {
-        if (playerInventory.containsKey((Zombie) event.getEntity())) {
-            for (ItemStack itemStack : playerInventory.get((Zombie) event.getEntity()).getContents()) {
+        if (event.getEntity() instanceof Zombie && MainSurvie.playerInventory.containsKey((Zombie) event.getEntity())) {
+            event.getDrops().clear();
+            for (ItemStack itemStack : MainSurvie.playerInventory.get((Zombie) event.getEntity()).getContents()) {
                 if (itemStack!=null) MainSurvie.WORLD.dropItemNaturally(event.getEntity().getLocation(), itemStack);
             }
-            playerInventory.remove((Zombie) event.getEntity());
+            MainSurvie.playerInventory.remove((Zombie) event.getEntity());
         }
     }
 }
