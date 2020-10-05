@@ -1,6 +1,7 @@
 package fr.milekat.cite_survie.event;
 
 import fr.milekat.cite_survie.MainSurvie;
+import net.craftersland.data.bridge.api.events.SyncCompleteEvent;
 import net.md_5.bungee.api.ChatMessageType;
 import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.GameMode;
@@ -19,16 +20,16 @@ public class SpawnProtect implements Listener {
 
     @EventHandler (ignoreCancelled = true)
     public void onSpawnDamage(EntityDamageEvent event) {
-        if (MainSurvie.isSafeSpawn.contains((Player) event.getEntity())) {
+        if (event.getEntity() instanceof Player && MainSurvie.isSafeSpawn.contains((Player) event.getEntity())) {
             event.setCancelled(true);
         }
     }
 
     @EventHandler (ignoreCancelled = true)
     public void onSpawnHit(EntityDamageByEntityEvent event) {
-        if (event.getDamager() instanceof Player && MainSurvie.isSafeSpawn.contains((Player) event.getEntity())) {
+        if (event.getEntity() instanceof Player && MainSurvie.isSafeSpawn.contains((Player) event.getEntity())) {
             event.setCancelled(true);
-            denyMsg(((Player) event.getDamager()));
+            if (event.getDamager() instanceof Player) denyMsg(((Player) event.getDamager()));
         }
     }
 
