@@ -46,8 +46,6 @@ public class MainSurvie extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        Bukkit.removeRecipe(new NamespacedKey(MainSurvie.getMainSurvie(), "diamond_hammer"));
-        Bukkit.removeRecipe(new NamespacedKey(MainSurvie.getMainSurvie(), "iron_hammer"));
         for (Zombie zombie: MainSurvie.playerInventory.keySet()) zombie.remove();
         timerDeco.cancel();
         timerAfk.cancel();
