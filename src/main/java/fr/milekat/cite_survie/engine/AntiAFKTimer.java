@@ -30,7 +30,7 @@ public class AntiAFKTimer {
                                             "§eKick pour AFK."));
                             JedisPub.sendRedis("log_sanction#:#kick#:#" +
                                     MainCore.profilHashMap.get(player.getUniqueId()).getDiscordid() +
-                                    "#:#console#:#null#:#null#:#Kick pour AFK");
+                                    "#:#console#:#null#:#null#:#Kick pour AFK#:#/kick " + player.getName() + " Kick pour AFK");
                         }
                     } else MainSurvie.timesPlayerAFK.remove(player);
                     MainSurvie.lastPlayerLocation.put(player,player.getLocation());
