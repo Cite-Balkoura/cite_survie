@@ -5,7 +5,6 @@ import fr.milekat.cite_survie.engine.DecoTimer;
 import fr.milekat.cite_survie.event.*;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.NamespacedKey;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
