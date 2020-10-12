@@ -14,7 +14,6 @@ jar {
     manifest {
         attributes "Main-Class": "fr.milekat.cite_survie.MainSurvie"
     }
-
     from {
         configurations.compile.collect { it.isDirectory() ? it : zipTree(it) }
     }
