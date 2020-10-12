@@ -14,16 +14,16 @@ public class AntiAFKTimer {
             @Override
             public void run() {
                 for (Player player: Bukkit.getServer().getOnlinePlayers()) {
-                    if (MainSurvie.lastPlayerLocation.getOrDefault(player,MainSurvie.SPAWN).distance(player.getLocation())<15) {
+                    if (MainSurvie.lastPlayerLocation.getOrDefault(player,MainSurvie.SPAWN).distance(player.getLocation())<12) {
                         MainSurvie.timesPlayerAFK.put(player,MainSurvie.timesPlayerAFK.getOrDefault(player,0) + 1);
-                        if (MainSurvie.timesPlayerAFK.getOrDefault(player,0)==5) {
+                        if (MainSurvie.timesPlayerAFK.getOrDefault(player,0)==20) {
                             player.sendMessage(MainCore.prefixCmd + "§6Tu vas finir par t'engourdir à bouger si peut.");
-                        } else if (MainSurvie.timesPlayerAFK.getOrDefault(player,0)==7) {
+                        } else if (MainSurvie.timesPlayerAFK.getOrDefault(player,0)==28) {
                             player.sendMessage(MainCore.prefixCmd + "§6Il est temps de bouger, §ctu sembles afk§6.");
-                        } else if (MainSurvie.timesPlayerAFK.getOrDefault(player,0)==9) {
+                        } else if (MainSurvie.timesPlayerAFK.getOrDefault(player,0)==36) {
                             player.sendMessage(MainCore.prefixCmd +
                                     "§cTu sera ejecté dans 1 minute pour afk si tu ne bouges pas plus.");
-                        } else if (MainSurvie.timesPlayerAFK.getOrDefault(player,0)>=10) {
+                        } else if (MainSurvie.timesPlayerAFK.getOrDefault(player,0)>=40) {
                             Bukkit.getScheduler().runTask(MainSurvie.getMainSurvie(),()->
                                     player.kickPlayer(MainCore.prefixCmd + System.lineSeparator() +
                                             "§cVous avez été kick pour la raison suivante:" + System.lineSeparator() +
@@ -36,6 +36,6 @@ public class AntiAFKTimer {
                     MainSurvie.lastPlayerLocation.put(player,player.getLocation());
                 }
             }
-        }.runTaskTimerAsynchronously(MainSurvie.getMainSurvie(), 0L, 1200L);
+        }.runTaskTimerAsynchronously(MainSurvie.getMainSurvie(), 0L, 300L);
     }
 }
