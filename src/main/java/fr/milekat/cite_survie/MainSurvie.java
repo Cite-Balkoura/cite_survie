@@ -39,6 +39,7 @@ public class MainSurvie extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new AntiDecoCmb(),this);
         getServer().getPluginManager().registerEvents(new AntiAFK(),this);
         getServer().getPluginManager().registerEvents(new VillagersCustom(),this);
+        getServer().getPluginManager().registerEvents(new PiglinTradeDisable(),this);
         // Engines
         timerDeco = new DecoTimer().runTask();
         timerAfk = new AntiAFKTimer().runTask();
