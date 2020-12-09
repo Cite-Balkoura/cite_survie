@@ -12,6 +12,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDeathEvent;
 import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
@@ -20,6 +21,11 @@ import org.bukkit.inventory.ItemStack;
 import java.util.Map;
 
 public class AntiDecoCmb implements Listener {
+    @EventHandler
+    public void onPlayerWorldChange(PlayerChangedWorldEvent event) {
+        MainSurvie.lastPlayerLocation.put(event.getPlayer(),event.getPlayer().getLocation());
+    }
+
     @EventHandler (ignoreCancelled = true)
     public void onPlayerTakeHit(EntityDamageByEntityEvent event) {
         if (event.getDamager() instanceof Player && event.getEntity() instanceof Player) {
@@ -53,7 +59,8 @@ public class AntiDecoCmb implements Listener {
             inventory.setContents(event.getPlayer().getInventory().getContents());
             MainSurvie.playerInventory.put(zombie, inventory);
             event.getPlayer().getInventory().clear();
-            event.getPlayer().teleport(MainSurvie.SPAWN);
+            event.getPlayer().setHealth(0);
+            event.getPlayer().spigot().respawn();
         }
     }
 

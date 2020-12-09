@@ -31,7 +31,12 @@ public class MainSurvie extends JavaPlugin {
     public void onEnable() {
         mainSurvie = this;
         WORLD = Bukkit.getWorld("world");
-        SPAWN = new Location(WORLD, 0, 155, 0);
+        if (WORLD==null) {
+            Bukkit.getLogger().warning("[ERROR] world \"world\" not found !");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
+        SPAWN = WORLD.getSpawnLocation();
         // Events
         getServer().getPluginManager().registerEvents(new HammerMine(),this);
         getServer().getPluginManager().registerEvents(new ElytraSpeedDisable(),this);
@@ -40,6 +45,7 @@ public class MainSurvie extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new AntiAFK(),this);
         getServer().getPluginManager().registerEvents(new VillagersCustom(),this);
         getServer().getPluginManager().registerEvents(new PiglinTradeDisable(),this);
+        getServer().getPluginManager().registerEvents(new SetPlayerLoc(),this);
         // Engines
         timerDeco = new DecoTimer().runTask();
         timerAfk = new AntiAFKTimer().runTask();

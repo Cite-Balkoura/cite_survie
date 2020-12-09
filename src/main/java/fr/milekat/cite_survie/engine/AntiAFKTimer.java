@@ -17,12 +17,12 @@ public class AntiAFKTimer {
                     if (MainSurvie.lastPlayerLocation.getOrDefault(player,MainSurvie.SPAWN).distance(player.getLocation())<12) {
                         MainSurvie.timesPlayerAFK.put(player,MainSurvie.timesPlayerAFK.getOrDefault(player,0) + 1);
                         if (MainSurvie.timesPlayerAFK.getOrDefault(player,0)==20) {
-                            player.sendMessage(MainCore.prefixCmd + "§6Tu vas finir par t'engourdir à bouger si peut.");
+                            player.sendMessage(MainCore.prefixCmd + "§6Tu vas finir par t'engourdir à bouger si peu.");
                         } else if (MainSurvie.timesPlayerAFK.getOrDefault(player,0)==28) {
                             player.sendMessage(MainCore.prefixCmd + "§6Il est temps de bouger, §ctu sembles afk§6.");
                         } else if (MainSurvie.timesPlayerAFK.getOrDefault(player,0)==36) {
                             player.sendMessage(MainCore.prefixCmd +
-                                    "§cTu sera ejecté dans 1 minute pour afk si tu ne bouges pas plus.");
+                                    "§cTu sera éjecté dans 1 minute pour afk si tu ne bouges pas plus.");
                         } else if (MainSurvie.timesPlayerAFK.getOrDefault(player,0)>=40) {
                             Bukkit.getScheduler().runTask(MainSurvie.getMainSurvie(),()->
                                     player.kickPlayer(MainCore.prefixCmd + System.lineSeparator() +

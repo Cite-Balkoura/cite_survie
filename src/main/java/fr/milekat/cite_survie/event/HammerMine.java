@@ -21,8 +21,13 @@ import java.util.*;
 public class HammerMine implements Listener {
     private final Map<UUID, BlockFace> lastClickedBlockFaces = new HashMap<>();
     private final Map<UUID, Location> lastClickedBlockLoc = new HashMap<>();
-    private final ArrayList<BlockFace> allowedFaces= new ArrayList<>(Arrays.asList(BlockFace.NORTH,BlockFace.EAST,
-            BlockFace.SOUTH,BlockFace.WEST,BlockFace.UP,BlockFace.DOWN));
+    private final ArrayList<BlockFace> allowedFaces= new ArrayList<>(Arrays.asList(
+            BlockFace.NORTH,
+            BlockFace.EAST,
+            BlockFace.SOUTH,
+            BlockFace.WEST,
+            BlockFace.UP,
+            BlockFace.DOWN));
     private final ArrayList<Material> allowedBlocks = new ArrayList<>(Arrays.asList(
             Material.STONE,
             Material.GRANITE,
@@ -81,20 +86,23 @@ public class HammerMine implements Listener {
         ArrayList<BlockFace> facesToMine = new ArrayList<>(allowedFaces);
         facesToMine.remove(blockFace);
         facesToMine.remove(blockFace.getOppositeFace());
-        ArrayList<Location> adjacents = new ArrayList<>();
+        ArrayList<Block> blocks = new ArrayList<>();
+        ArrayList<Block> nearBlocks = new ArrayList<>();
+        if (tool.getType().equals(Material.AIR)) return;
         for (BlockFace faceloop: facesToMine) {
-            Block block = event.getBlock().getRelative(faceloop);
-            if (allowedBlocks.contains(block.getType()) && !tool.getType().equals(Material.AIR)) {
+            blocks.add(event.getBlock().getRelative(faceloop));
+            for (BlockFace adjacentsFaces: allowedFaces) {
+                Block loopAdjacentsBlock = event.getBlock().getRelative(faceloop).getRelative(adjacentsFaces);
+                if (nearBlocks.contains(loopAdjacentsBlock)) {
+                    blocks.add(loopAdjacentsBlock);
+                }
+                nearBlocks.add(loopAdjacentsBlock);
+            }
+        }
+        for (Block block: blocks) {
+            if (allowedBlocks.contains(block.getType())) {
                 block.breakNaturally(tool);
                 processItemUses(event.getPlayer(), tool, meta);
-            }
-            for (BlockFace adjacentsFaces: allowedFaces) {
-                Block loopAdjacentsBlock = block.getRelative(adjacentsFaces);
-                if (adjacents.contains(loopAdjacentsBlock.getLocation()) && !tool.getType().equals(Material.AIR)) {
-                    loopAdjacentsBlock.breakNaturally(tool);
-                    processItemUses(event.getPlayer(), tool, meta);
-                }
-                adjacents.add(loopAdjacentsBlock.getLocation());
             }
         }
     }
@@ -107,12 +115,12 @@ public class HammerMine implements Listener {
     }
 
     /**
-     *      Ajout de durability ou non si unBreaking
+     *      Ajout de durability ou non si unBreaking -> De base le hammer = unbreaking + 1 level
      */
     private void processItemUses(Player player, ItemStack itemStack, ItemMeta meta) {
         if (!(((Damageable) meta).getDamage() >= itemStack.getType().getMaxDurability())) {
             if (new Random().nextInt(100) > (100 - (100 /
-                    (itemStack.getEnchantments().getOrDefault(Enchantment.DURABILITY, 0) + 1 + 1)))) {
+                    (itemStack.getEnchantments().getOrDefault(Enchantment.DURABILITY, 0) + 2)))) {
                 ((Damageable) meta).setDamage(((Damageable) meta).getDamage() + 1);
                 itemStack.setItemMeta(meta);
             }
