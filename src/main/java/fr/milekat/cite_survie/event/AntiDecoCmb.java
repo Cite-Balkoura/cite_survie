@@ -1,7 +1,6 @@
 package fr.milekat.cite_survie.event;
 
 import fr.milekat.cite_survie.MainSurvie;
-import net.craftersland.data.bridge.api.events.SyncCompleteEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -17,8 +16,6 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-
-import java.util.Map;
 
 public class AntiDecoCmb implements Listener {
     @EventHandler
@@ -61,18 +58,6 @@ public class AntiDecoCmb implements Listener {
             event.getPlayer().getInventory().clear();
             event.getPlayer().setHealth(0);
             event.getPlayer().spigot().respawn();
-        }
-    }
-
-    @EventHandler
-    public void onPlayerReJoin(SyncCompleteEvent event) {
-        for (Map.Entry<Zombie, Inventory> loop: MainSurvie.playerInventory.entrySet()) {
-            if (loop.getKey().getName().equalsIgnoreCase(event.getPlayer().getName())) {
-                event.getPlayer().teleport(loop.getKey().getLocation());
-                event.getPlayer().getInventory().setContents(loop.getValue().getContents());
-                MainSurvie.playerInventory.remove(loop.getKey());
-                loop.getKey().remove();
-            }
         }
     }
 
