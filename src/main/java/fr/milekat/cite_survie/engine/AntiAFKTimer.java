@@ -14,7 +14,8 @@ public class AntiAFKTimer {
             @Override
             public void run() {
                 for (Player player: Bukkit.getServer().getOnlinePlayers()) {
-                    if (MainSurvie.lastPlayerLocation.getOrDefault(player,MainSurvie.SPAWN).distance(player.getLocation())<12) {
+                    if (!MainSurvie.lastPlayerLocation.containsKey(player)) continue;
+                    if (MainSurvie.lastPlayerLocation.get(player).distance(player.getLocation())<12) {
                         MainSurvie.timesPlayerAFK.put(player,MainSurvie.timesPlayerAFK.getOrDefault(player,0) + 1);
                         if (MainSurvie.timesPlayerAFK.getOrDefault(player,0)==20) {
                             player.sendMessage(MainCore.prefixCmd + "§6Tu vas finir par t'engourdir à bouger si peu.");

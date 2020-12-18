@@ -66,7 +66,7 @@ public class AntiDecoCmb implements Listener {
         if (event.getEntity() instanceof Zombie && MainSurvie.playerInventory.containsKey((Zombie) event.getEntity())) {
             event.getDrops().clear();
             for (ItemStack itemStack : MainSurvie.playerInventory.get((Zombie) event.getEntity()).getContents()) {
-                if (itemStack!=null) MainSurvie.WORLD.dropItemNaturally(event.getEntity().getLocation(), itemStack);
+                if (itemStack!=null) event.getEntity().getWorld().dropItemNaturally(event.getEntity().getLocation(), itemStack);
             }
             MainSurvie.playerInventory.remove((Zombie) event.getEntity());
         }

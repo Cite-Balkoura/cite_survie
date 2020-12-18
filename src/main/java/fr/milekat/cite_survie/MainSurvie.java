@@ -3,9 +3,7 @@ package fr.milekat.cite_survie;
 import fr.milekat.cite_survie.engine.AntiAFKTimer;
 import fr.milekat.cite_survie.engine.DecoTimer;
 import fr.milekat.cite_survie.event.*;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.entity.Zombie;
 import org.bukkit.inventory.Inventory;
@@ -17,8 +15,6 @@ import java.util.HashMap;
 
 public class MainSurvie extends JavaPlugin {
     private static MainSurvie mainSurvie;
-    public static World WORLD;
-    public static Location SPAWN;
     public static ArrayList<Player> isSafeSpawn = new ArrayList<>();
     public static HashMap<Player, Integer> playerCombat = new HashMap<>();
     public static HashMap<Zombie, Inventory> playerInventory = new HashMap<>();
@@ -30,13 +26,6 @@ public class MainSurvie extends JavaPlugin {
     @Override
     public void onEnable() {
         mainSurvie = this;
-        WORLD = Bukkit.getWorld("world");
-        if (WORLD==null) {
-            Bukkit.getLogger().warning("[ERROR] world \"world\" not found !");
-            getServer().getPluginManager().disablePlugin(this);
-            return;
-        }
-        SPAWN = WORLD.getSpawnLocation();
         // Events
         getServer().getPluginManager().registerEvents(new HammerMine(),this);
         getServer().getPluginManager().registerEvents(new ElytraSpeedDisable(),this);
@@ -45,7 +34,8 @@ public class MainSurvie extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new AntiAFK(),this);
         getServer().getPluginManager().registerEvents(new VillagersCustom(),this);
         getServer().getPluginManager().registerEvents(new PiglinTradeDisable(),this);
-        getServer().getPluginManager().registerEvents(new SetPlayerLoc(),this);
+        getServer().getPluginManager().registerEvents(new SendToEnd(),this);
+        getServer().getPluginManager().registerEvents(new RaidNerf(),this);
         // Engines
         timerDeco = new DecoTimer().runTask();
         timerAfk = new AntiAFKTimer().runTask();

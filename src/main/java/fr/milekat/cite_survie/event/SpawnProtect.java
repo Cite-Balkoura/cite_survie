@@ -6,8 +6,8 @@ import net.md_5.bungee.api.chat.TextComponent;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.entity.ThrownPotion;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockBreakEvent;
@@ -19,6 +19,8 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import java.util.ArrayList;
 
 public class SpawnProtect implements Listener {
+    private final int REDZONESIZE = 75;
+    private final int GREENZONESIZE = 50;
 
     @EventHandler (ignoreCancelled = true)
     public void onSpawnDamage(EntityDamageEvent event) {
@@ -43,40 +45,19 @@ public class SpawnProtect implements Listener {
         }
     }
 
-    @EventHandler (ignoreCancelled = true)
-    public void onSpawnPotionThrow(ProjectileLaunchEvent event) {
-        if (!(event.getEntity() instanceof ThrownPotion)) return;
-        Location ploc = event.getEntity().getLocation();
-        if ((ploc.getBlockX() > 50 || ploc.getBlockX() < -50 || ploc.getBlockZ() > 50 || ploc.getBlockZ() < -50)
-                && ploc.getWorld()!=null && ploc.getWorld().getName().equalsIgnoreCase("world")) {
-            event.setCancelled(true);
-            denyAction(((Player) event.getEntity()));
-        }
-    }
-
-    @EventHandler (ignoreCancelled = true)
-    public void onSpawnPotionSplash(PotionSplashEvent event) {
-        Location ploc = event.getEntity().getLocation();
-        if ((ploc.getBlockX() > 50 || ploc.getBlockX() < -50 || ploc.getBlockZ() > 50 || ploc.getBlockZ() < -50)
-                && ploc.getWorld()!=null && ploc.getWorld().getName().equalsIgnoreCase("world")) {
-            event.setCancelled(true);
-            denyAction(((Player) event.getEntity()));
-        }
-    }
-
     @EventHandler
     public void onSpawnSet(PlayerMoveEvent event) {
         Location ploc = event.getPlayer().getLocation();
         if (MainSurvie.isSafeSpawn.contains(event.getPlayer())) {
             /* Sortie de la zone rouge */
-            if ((ploc.getBlockX() > 50 || ploc.getBlockX() < -50 || ploc.getBlockZ() > 50 || ploc.getBlockZ() < -50)
-                    && ploc.getWorld()!=null && ploc.getWorld().getName().equalsIgnoreCase("world")) {
+            if ((ploc.getBlockX() > REDZONESIZE || ploc.getBlockX() < -REDZONESIZE || ploc.getBlockZ() > REDZONESIZE || ploc.getBlockZ() < -REDZONESIZE
+                    || (ploc.getWorld()!=null && !ploc.getWorld().getName().equalsIgnoreCase("world")))) {
                 MainSurvie.isSafeSpawn.remove(event.getPlayer());
                 event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§cVous n'êtes plus protégé."));
             }
         } else {
             /* Entrée dans la zone verte */
-            if ((ploc.getBlockX() <= 25 && ploc.getBlockX() >= -25 && ploc.getBlockZ() <= 25 && ploc.getBlockZ() >= -25)
+            if ((ploc.getBlockX() <= GREENZONESIZE && ploc.getBlockX() >= -GREENZONESIZE && ploc.getBlockZ() <= GREENZONESIZE && ploc.getBlockZ() >= -GREENZONESIZE)
                     && ploc.getWorld()!=null && ploc.getWorld().getName().equalsIgnoreCase("world")) {
                 MainSurvie.isSafeSpawn.add(event.getPlayer());
                 event.getPlayer().spigot().sendMessage(ChatMessageType.ACTION_BAR, new TextComponent("§aVous êtes désormais safe."));
@@ -92,7 +73,7 @@ public class SpawnProtect implements Listener {
     @EventHandler (ignoreCancelled = true)
     public void onSpawnPlace(BlockPlaceEvent event) {
         Location location = event.getBlock().getLocation();
-        if ((location.getX() <= 50 && location.getX() >= -50 && location.getZ() <= 50 && location.getZ() >= -50)
+        if ((location.getX() <= REDZONESIZE && location.getX() >= -REDZONESIZE && location.getZ() <= REDZONESIZE && location.getZ() >= -REDZONESIZE)
                 && location.getWorld()!=null && location.getWorld().getName().equalsIgnoreCase("world")) {
             if (!event.getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
                 event.setCancelled(true);
@@ -104,7 +85,7 @@ public class SpawnProtect implements Listener {
     @EventHandler (ignoreCancelled = true)
     public void onSpawnBreak(BlockBreakEvent event) {
         Location location = event.getBlock().getLocation();
-        if ((location.getX() <= 50 && location.getX() >= -50 && location.getZ() <= 50 && location.getZ() >= -50)
+        if ((location.getX() <= REDZONESIZE && location.getX() >= -REDZONESIZE && location.getZ() <= REDZONESIZE && location.getZ() >= -REDZONESIZE)
                 && location.getWorld()!=null && location.getWorld().getName().equalsIgnoreCase("world")) {
             if (!event.getPlayer().getGameMode().equals(GameMode.CREATIVE)) {
                 event.setCancelled(true);
@@ -114,9 +95,19 @@ public class SpawnProtect implements Listener {
     }
 
     @EventHandler (ignoreCancelled = true)
+    public void onMobSpawn(CreatureSpawnEvent event) {
+        Location location = event.getLocation();
+        if ((location.getBlockX() <= GREENZONESIZE && location.getBlockX() >= -GREENZONESIZE && location.getBlockZ() <= GREENZONESIZE && location.getBlockZ() >= -GREENZONESIZE)
+                && location.getWorld()!=null && location.getWorld().getName().equalsIgnoreCase("world")) {
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler (ignoreCancelled = true)
     public void onSpawnBreakMob(EntityChangeBlockEvent event) {
+        if (event.getEntityType() == EntityType.FALLING_BLOCK) return;
         Location location = event.getBlock().getLocation();
-        if ((location.getX() <= 50 && location.getX() >= -50 && location.getZ() <= 50 && location.getZ() >= -50)
+        if ((location.getX() <= REDZONESIZE && location.getX() >= -REDZONESIZE && location.getZ() <= REDZONESIZE && location.getZ() >= -REDZONESIZE)
                 && location.getWorld()!=null && location.getWorld().getName().equalsIgnoreCase("world")) {
             event.setCancelled(true);
         }
@@ -127,7 +118,7 @@ public class SpawnProtect implements Listener {
         ArrayList<Block> blockArrayList = new ArrayList<>(event.blockList());
         for (Block block : blockArrayList) {
             Location location = block.getLocation();
-            if ((location.getX() <= 50 && location.getX() >= -50 && location.getZ() <= 50 && location.getZ() >= -50)
+            if ((location.getX() <= REDZONESIZE && location.getX() >= -REDZONESIZE && location.getZ() <= REDZONESIZE && location.getZ() >= -REDZONESIZE)
                     && location.getWorld()!=null && location.getWorld().getName().equalsIgnoreCase("world")) {
                 event.blockList().remove(block);
             }
